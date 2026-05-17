@@ -1,0 +1,40 @@
+{
+  "name": "ironweft",
+  "version": "0.1.0",
+  "description": "Official Node.js / TypeScript SDK for the IronWeft Agent IAM API",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "ironweft",
+    "agent",
+    "iam",
+    "authorization",
+    "sdk"
+  ],
+  "author": "IronWeft",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^5.4.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/EmohSenoon/ironweft-node"
+  }
+}
