@@ -74,6 +74,15 @@ export class AgentHandle {
         }
         return resp;
     }
+    // ── batch ──────────────────────────────────────────────────────────────────
+    /**
+     * Evaluate multiple actions in one request.
+     * Cached allows are served locally; the rest are bundled into a single
+     * POST /authorize/batch call. Returns the full batch response: { results, summary }.
+     */
+    async batch(params) {
+        return this.client.authorizeBatch(params);
+    }
     // ── gate ───────────────────────────────────────────────────────────────────
     /**
      * Higher-order function that wraps an async function with an IronWeft

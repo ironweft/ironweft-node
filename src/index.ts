@@ -22,6 +22,9 @@
 export { IronWeftClient } from "./client.js";
 export type { IronWeftClientOptions, AgentHandleInterface } from "./client.js";
 
+// Cache
+export { AuthCache } from "./cache.js";
+
 // AgentHandle — importing this registers the factory with IronWeftClient
 export { AgentHandle } from "./agent.js";
 
@@ -42,6 +45,10 @@ export type {
   AuthDecision,
   AuthorizeRequest,
   AuthorizeResponse,
+  BatchAuthorizeItem,
+  BatchResultItem,
+  BatchSummary,
+  BatchAuthorizeResponse,
   LogAuditEventRequest,
   LogAuditEventResponse,
   AuditEvent,

@@ -14,7 +14,13 @@
 
 import { IronWeftClient, setAgentHandleFactory } from "./client.js";
 import { AuthorizationDenied, AgentSuspended, AgentRetired } from "./errors.js";
-import type { AgentPermissionsResponse, AuditEvent, DelegateAgentResponse } from "./types.js";
+import type {
+  AgentPermissionsResponse,
+  AuditEvent,
+  BatchAuthorizeItem,
+  BatchAuthorizeResponse,
+  DelegateAgentResponse,
+} from "./types.js";
 
 export class AgentHandle {
   readonly agentId: string;
@@ -97,6 +103,21 @@ export class AgentHandle {
     }
 
     return resp;
+  }
+
+  // ── batch ──────────────────────────────────────────────────────────────────
+
+  /**
+   * Evaluate multiple actions in one request.
+   * Cached allows are served locally; the rest are bundled into a single
+   * POST /authorize/batch call. Returns the full batch response: { results, summary }.
+   */
+  async batch(params: {
+    credential: string;
+    actions: BatchAuthorizeItem[];
+    skipCache?: boolean;
+  }): Promise<BatchAuthorizeResponse> {
+    return this.client.authorizeBatch(params);
   }
 
   // ── gate ───────────────────────────────────────────────────────────────────

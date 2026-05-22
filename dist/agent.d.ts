@@ -12,7 +12,7 @@
  *   await agent.check("payment.send", { credential: cred, resource: "account_7721" });
  */
 import { IronWeftClient } from "./client.js";
-import type { AgentPermissionsResponse, AuditEvent, DelegateAgentResponse } from "./types.js";
+import type { AgentPermissionsResponse, AuditEvent, BatchAuthorizeItem, BatchAuthorizeResponse, DelegateAgentResponse } from "./types.js";
 export declare class AgentHandle {
     readonly agentId: string;
     private readonly client;
@@ -46,6 +46,16 @@ export declare class AgentHandle {
         allowed_scopes: string[];
         audit_event_id: string;
     }>;
+    /**
+     * Evaluate multiple actions in one request.
+     * Cached allows are served locally; the rest are bundled into a single
+     * POST /authorize/batch call. Returns the full batch response: { results, summary }.
+     */
+    batch(params: {
+        credential: string;
+        actions: BatchAuthorizeItem[];
+        skipCache?: boolean;
+    }): Promise<BatchAuthorizeResponse>;
     /**
      * Higher-order function that wraps an async function with an IronWeft
      * authorization check. Issues a fresh credential and calls /authorize

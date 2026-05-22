@@ -19,6 +19,8 @@
  */
 // Client (must come before agent so the factory can be registered)
 export { IronWeftClient } from "./client.js";
+// Cache
+export { AuthCache } from "./cache.js";
 // AgentHandle — importing this registers the factory with IronWeftClient
 export { AgentHandle } from "./agent.js";
 // Errors

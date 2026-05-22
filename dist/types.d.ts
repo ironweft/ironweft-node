@@ -72,6 +72,35 @@ export interface AuthorizeResponse {
     reason: string;
     allowed_scopes: string[];
     audit_event_id: string;
+    /** Set by the SDK cache; not present in API responses. */
+    _cached?: boolean;
+}
+export interface BatchAuthorizeItem {
+    action: string;
+    resource?: string;
+    parameters?: Record<string, unknown>;
+    context?: Record<string, unknown>;
+    initiator?: string;
+    /** Caller-supplied ID echoed back in each result for correlation. */
+    ref?: string;
+}
+export interface BatchResultItem {
+    ref?: string;
+    action: string;
+    decision: AuthDecision;
+    reason: string;
+    audit_event_id?: string;
+    _cached?: boolean;
+}
+export interface BatchSummary {
+    total: number;
+    allow: number;
+    deny: number;
+    challenge: number;
+}
+export interface BatchAuthorizeResponse {
+    results: BatchResultItem[];
+    summary: BatchSummary;
 }
 export interface LogAuditEventRequest {
     agent_id: string;

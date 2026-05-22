@@ -6,7 +6,7 @@
  *   const client = new IronWeftClient({ apiKey: "iw_live_xxx" });
  *   const agent  = client.agent("agt_xxx");
  */
-import type { RegisterAgentResponse, AgentPermissionsResponse, AgentStatus, UpdateAgentStatusResponse, IssueCredentialResponse, DelegateAgentResponse, AuthorizeResponse, LogAuditEventResponse, AuditTrailParams, AuditTrailResponse, UpdateTenantResponse, RotateKeyResponse } from "./types.js";
+import type { RegisterAgentResponse, AgentPermissionsResponse, AgentStatus, UpdateAgentStatusResponse, IssueCredentialResponse, DelegateAgentResponse, AuthorizeResponse, BatchAuthorizeItem, BatchAuthorizeResponse, LogAuditEventResponse, AuditTrailParams, AuditTrailResponse, UpdateTenantResponse, RotateKeyResponse } from "./types.js";
 /** Minimal interface used by IronWeftClient — avoids importing AgentHandle directly. */
 export interface AgentHandleInterface {
     readonly agentId: string;
@@ -20,11 +20,14 @@ export interface IronWeftClientOptions {
     baseUrl?: string;
     /** Request timeout in milliseconds. Defaults to 10 000. */
     timeoutMs?: number;
+    /** Cache allow decisions in-process. TTL bound to credential expiry. Default: true. */
+    cache?: boolean;
 }
 export declare class IronWeftClient {
     private readonly apiKey;
     private readonly baseUrl;
     private readonly timeoutMs;
+    private readonly _cache;
     constructor(options: IronWeftClientOptions);
     private authHeaders;
     /**
@@ -76,6 +79,8 @@ export declare class IronWeftClient {
     /**
      * Evaluate a policy decision for a given credential and action.
      * Returns decision, reason, allowed_scopes, audit_event_id.
+     * Allow decisions are cached in-process (TTL = credential expiry).
+     * Pass skipCache: true to force a live round-trip (e.g. after a policy change).
      */
     authorize(params: {
         credential: string;
@@ -84,7 +89,24 @@ export declare class IronWeftClient {
         parameters?: Record<string, unknown>;
         context?: Record<string, unknown>;
         initiator?: string;
+        skipCache?: boolean;
     }): Promise<AuthorizeResponse>;
+    /**
+     * Evaluate up to 50 actions in a single request.
+     * Cached allow decisions are served locally; uncached actions are bundled
+     * into one POST /authorize/batch call.
+     * Returns the full batch response: { results, summary }.
+     */
+    authorizeBatch(params: {
+        credential: string;
+        actions: BatchAuthorizeItem[];
+        skipCache?: boolean;
+    }): Promise<BatchAuthorizeResponse>;
+    /**
+     * Evict cached decisions. Pass a credential to evict only that credential's
+     * entries (e.g. after receiving a policy-change webhook). Omit to clear all.
+     */
+    invalidateCache(credential?: string): void;
     /**
      * Write a structured audit event to the hash-chained log.
      */
