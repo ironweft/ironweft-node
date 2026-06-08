@@ -4,6 +4,16 @@ All notable changes to the IronWeft Node.js / TypeScript SDK. Follows [Semantic 
 
 ---
 
+## [0.2.1] — 2026-06-08
+
+### Added
+- CJS (CommonJS) support — `require('ironweft')` now works in CommonJS projects alongside existing ESM `import`
+
+### Changed
+- `apiKey` in `IronWeftClientOptions` is now optional; reads `IRONWEFT_API_KEY` from the environment if not passed explicitly (falls back to `IRONWEFT_TENANT_API_KEY` for backwards compatibility)
+
+---
+
 ## [0.2.0] — 2026-05-17
 
 ### Added
