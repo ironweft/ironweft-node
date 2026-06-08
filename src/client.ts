@@ -50,8 +50,11 @@ export function setAgentHandleFactory(
 }
 
 export interface IronWeftClientOptions {
-  /** Bearer token — must start with `iw_live_` or `iw_test_`. */
-  apiKey: string;
+  /**
+   * Bearer token — must start with `iw_live_` or `iw_test_`.
+   * If omitted, reads from IRONWEFT_API_KEY env var (falls back to IRONWEFT_TENANT_API_KEY).
+   */
+  apiKey?: string;
   /** Override the base URL (useful for testing). Defaults to https://ironweft.io */
   baseUrl?: string;
   /** Request timeout in milliseconds. Defaults to 10 000. */
@@ -66,11 +69,17 @@ export class IronWeftClient {
   private readonly timeoutMs: number;
   private readonly _cache: AuthCache | null;
 
-  constructor(options: IronWeftClientOptions) {
-    if (!options.apiKey) {
-      throw new IronWeftError("apiKey is required");
+  constructor(options: IronWeftClientOptions = {}) {
+    const resolved =
+      options.apiKey ??
+      process.env["IRONWEFT_API_KEY"] ??
+      process.env["IRONWEFT_TENANT_API_KEY"];
+    if (!resolved) {
+      throw new IronWeftError(
+        "apiKey is required. Pass it explicitly or set the IRONWEFT_API_KEY environment variable."
+      );
     }
-    this.apiKey = options.apiKey;
+    this.apiKey = resolved;
     this.baseUrl = (options.baseUrl ?? "https://ironweft.io").replace(/\/$/, "");
     this.timeoutMs = options.timeoutMs ?? 10_000;
     this._cache = (options.cache ?? true) ? new AuthCache() : null;
