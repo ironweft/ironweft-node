@@ -4,6 +4,13 @@ All notable changes to the IronWeft Node.js / TypeScript SDK. Follows [Semantic 
 
 ---
 
+## [0.2.2] — 2026-06-08
+
+### Fixed
+- Strip leading/trailing whitespace from API key (env vars with trailing spaces no longer cause request errors)
+
+---
+
 ## [0.2.1] — 2026-06-08
 
 ### Added

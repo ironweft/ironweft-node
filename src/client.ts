@@ -79,7 +79,7 @@ export class IronWeftClient {
         "apiKey is required. Pass it explicitly or set the IRONWEFT_API_KEY environment variable."
       );
     }
-    this.apiKey = resolved;
+    this.apiKey = resolved.trim();
     this.baseUrl = (options.baseUrl ?? "https://ironweft.io").replace(/\/$/, "");
     this.timeoutMs = options.timeoutMs ?? 10_000;
     this._cache = (options.cache ?? true) ? new AuthCache() : null;
