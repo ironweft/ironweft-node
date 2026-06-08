@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    name: Node ${{ matrix.node-version }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ["18", "20", "22"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Build
+        run: npm run build
+
+      - name: ESM import check
+        run: |
+          node --input-type=module <<'EOF'
+          import { IronWeftClient, IronWeftError, AuthorizationDenied } from './dist/index.js';
+          const c = new IronWeftClient({ apiKey: 'test_key', baseUrl: 'https://example.com' });
+          const h = c.agent('agt_test');
+          console.log('ESM imports OK');
+          EOF
+
+      - name: CJS require check
+        run: |
+          node -e "
+          const { IronWeftClient } = require('./dist/cjs/index.js');
+          const c = new IronWeftClient({ apiKey: 'test_key', baseUrl: 'https://example.com' });
+          console.log('CJS require OK');
+          "
